@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     let db = Firestore.firestore()
+    let collectionName = "message"
     var messageBox: [[String: Any]] = []
     
     override func viewDidLoad() {
@@ -53,7 +54,7 @@ class ViewController: UIViewController {
         
         var ref: DocumentReference? = nil
         
-        ref = db.collection("message").addDocument(data: postData) { err in
+        ref = db.collection(collectionName).addDocument(data: postData) { err in
             if let err = err {
                 print("Error adding document: \(err)")
             } else {
@@ -65,14 +66,14 @@ class ViewController: UIViewController {
     }
     
     func setListenMessage() {
-        db.collection("message").addSnapshotListener { (snapShot, error) in
+        db.collection(collectionName).addSnapshotListener { (snapShot, error) in
             guard let data = snapShot else {
                 print("data is nil")
                 return
             }
             data.documentChanges.forEach { new in
                 if (new.type == .added){
-                    self.db.collection("message")
+                    self.db.collection(self.collectionName)
                         .order(by: "created_at", descending: true)
                         .getDocuments { [weak self] snapshot, error in
                             if let error = error {
