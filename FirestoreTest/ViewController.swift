@@ -13,11 +13,16 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var tableView: UITableView!
+
+    let db = Firestore.firestore()
+    var messageBox: [[String: Any]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.textField.delegate = self
+        
+        setListenMessage()
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
@@ -46,7 +51,6 @@ class ViewController: UIViewController {
             "created_at": Date()
         ]
         
-        let db = Firestore.firestore()
         var ref: DocumentReference? = nil
         
         ref = db.collection("message").addDocument(data: postData) { err in
@@ -58,6 +62,34 @@ class ViewController: UIViewController {
         }
         
         textField.text = ""
+    }
+    
+    func setListenMessage() {
+        db.collection("message").addSnapshotListener { (snapShot, error) in
+            guard let data = snapShot else {
+                print("data is nil")
+                return
+            }
+            data.documentChanges.forEach { new in
+                if (new.type == .added){
+                    self.messageBox.insert(new.document.data(), at: 0)
+//                    self.db.collection("message")
+//                        .order(by: "created_at", descending: false)
+//                        .getDocuments { [weak self] snapshot, error in
+//                            if let error = error {
+//                                print("Error getting documents: \(error)")
+//                            } else {
+//                                self?.messageBox = snapshot?.documents.map { $0.data() } ?? []
+//                            }
+//                    }
+                }
+            }
+//            self.tableView.reloadData()
+            let range = NSMakeRange(0, self.tableView.numberOfSections)
+            let sections = NSIndexSet(indexesIn: range)
+            self.tableView.reloadSections(sections as IndexSet, with: .automatic)
+            self.tableView.scrollsToTop = true
+        }
     }
     
     @objc func keyboardWillShow(notification: NSNotification) {
@@ -85,18 +117,13 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return messageBox.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath)
-        cell.textLabel?.text = "ほげ"
-        cell.detailTextLabel?.text = "ははは"
-    
-//        let location = self.locations[indexPath.row]
-//        cell.textLabel?.text = "\(location.latitude),\(location.longitude)"
-//        cell.detailTextLabel?.text = location.createdAt.description
-
+        cell.textLabel?.text = messageBox[indexPath.row]["message"] as? String
+//        cell.detailTextLabel?.text = messageBox[indexPath.row]["created_at"]
         return cell
     }
 }
