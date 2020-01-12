@@ -12,11 +12,13 @@ import Firebase
 class ViewController: UIViewController {
     
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.textField.delegate = self
+        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -77,6 +79,32 @@ class ViewController: UIViewController {
     
     @objc func dismissKeyboard() {
         self.view.endEditing(true)
+    }
+}
+
+extension ViewController: UITableViewDataSource {
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath)
+        cell.textLabel?.text = "ほげ"
+        cell.detailTextLabel?.text = "ははは"
+    
+//        let location = self.locations[indexPath.row]
+//        cell.textLabel?.text = "\(location.latitude),\(location.longitude)"
+//        cell.detailTextLabel?.text = location.createdAt.description
+
+        return cell
+    }
+}
+
+// MARK: - Table view delegate
+extension ViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
