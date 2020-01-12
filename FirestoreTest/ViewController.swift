@@ -72,23 +72,18 @@ class ViewController: UIViewController {
             }
             data.documentChanges.forEach { new in
                 if (new.type == .added){
-                    self.messageBox.insert(new.document.data(), at: 0)
-//                    self.db.collection("message")
-//                        .order(by: "created_at", descending: false)
-//                        .getDocuments { [weak self] snapshot, error in
-//                            if let error = error {
-//                                print("Error getting documents: \(error)")
-//                            } else {
-//                                self?.messageBox = snapshot?.documents.map { $0.data() } ?? []
-//                            }
-//                    }
+                    self.db.collection("message")
+                        .order(by: "created_at", descending: true)
+                        .getDocuments { [weak self] snapshot, error in
+                            if let error = error {
+                                print("Error getting documents: \(error)")
+                            } else {
+                                self?.messageBox = snapshot?.documents.map { $0.data() } ?? []
+                                self?.tableView.reloadData()
+                            }
+                    }
                 }
             }
-//            self.tableView.reloadData()
-            let range = NSMakeRange(0, self.tableView.numberOfSections)
-            let sections = NSIndexSet(indexesIn: range)
-            self.tableView.reloadSections(sections as IndexSet, with: .automatic)
-            self.tableView.scrollsToTop = true
         }
     }
     
@@ -123,7 +118,6 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath)
         cell.textLabel?.text = messageBox[indexPath.row]["message"] as? String
-//        cell.detailTextLabel?.text = messageBox[indexPath.row]["created_at"]
         return cell
     }
 }
