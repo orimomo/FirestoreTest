@@ -111,7 +111,6 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: UITableViewDataSource {
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messageBox.count
     }
@@ -123,7 +122,6 @@ extension ViewController: UITableViewDataSource {
     }
 }
 
-// MARK: - Table view delegate
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -131,7 +129,6 @@ extension ViewController: UITableViewDelegate {
 }
 
 extension ViewController: UITextFieldDelegate {
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
