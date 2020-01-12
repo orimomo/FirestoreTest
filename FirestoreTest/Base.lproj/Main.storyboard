@@ -28,6 +28,9 @@
                                         <color key="backgroundColor" red="1" green="0.94431127055096375" blue="0.72871535492154438" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <color key="tintColor" red="0.33220520619999999" green="0.77896863220000001" blue="0.0030338549989999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                         <state key="normal" title="投稿"/>
+                                        <connections>
+                                            <action selector="postMessage:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Izo-eD-WWc"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
