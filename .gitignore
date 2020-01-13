@@ -4,3 +4,6 @@ UserInterfaceState.xcuserstate
 
 # CocoaPods
 Pods/
+
+# Firebase
+GoogleService-Info.plist
