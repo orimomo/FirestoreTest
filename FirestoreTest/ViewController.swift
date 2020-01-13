@@ -15,15 +15,15 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
 
     let db = Firestore.firestore()
-    let collectionName = "message"
-    var messageBox: [[String: Any]] = []
+    let collectionName = "post"
+    var posts: [PostModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.textField.delegate = self
         
-        setListenMessage()
+        setListener()
         
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
@@ -54,7 +54,8 @@ class ViewController: UIViewController {
         
         var ref: DocumentReference? = nil
         
-        ref = db.collection(collectionName).addDocument(data: postData) { err in
+        ref = db.collection(collectionName)
+            .addDocument(data: postData) { err in
             if let err = err {
                 print("Error adding document: \(err)")
             } else {
@@ -65,26 +66,31 @@ class ViewController: UIViewController {
         textField.text = ""
     }
     
-    func setListenMessage() {
-        db.collection(collectionName).addSnapshotListener { (snapShot, error) in
+    private func setListener() {
+        db.collection(collectionName)
+            .addSnapshotListener { (snapShot, error) in
             guard let data = snapShot else {
                 print("data is nil")
                 return
             }
             data.documentChanges.forEach { new in
                 if (new.type == .added){
-                    self.db.collection(self.collectionName)
-                        .order(by: "created_at", descending: true)
-                        .getDocuments { [weak self] snapshot, error in
-                            if let error = error {
-                                print("Error getting documents: \(error)")
-                            } else {
-                                self?.messageBox = snapshot?.documents.map { $0.data() } ?? []
-                                self?.tableView.reloadData()
-                            }
-                    }
+                    self.getSortedPosts()
                 }
             }
+        }
+    }
+    
+    private func getSortedPosts() {
+        db.collection(collectionName)
+            .order(by: "created_at", descending: true)
+            .getDocuments { [weak self] snapshot, error in
+                if let error = error {
+                    print("Error getting documents: \(error)")
+                } else {
+                    self?.posts = snapshot?.documents.map { PostModel(document: $0.data()) } ?? []
+                    self?.tableView.reloadData()
+                }
         }
     }
     
@@ -112,12 +118,12 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messageBox.count
+        return posts.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath)
-        cell.textLabel?.text = messageBox[indexPath.row]["message"] as? String
+        cell.textLabel?.text = posts[indexPath.row].message
         return cell
     }
 }
