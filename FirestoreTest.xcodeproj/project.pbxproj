@@ -70,12 +70,12 @@
 				095CAF1223CB078800503188 /* AppDelegate.swift */,
 				095CAF1423CB078800503188 /* SceneDelegate.swift */,
 				095CAF1623CB078800503188 /* ViewController.swift */,
+				095CAF2C23CCB5EE00503188 /* PostModel.swift */,
 				095CAF1823CB078800503188 /* Main.storyboard */,
 				095CAF1B23CB078B00503188 /* Assets.xcassets */,
 				095CAF1D23CB078B00503188 /* LaunchScreen.storyboard */,
 				095CAF2023CB078B00503188 /* Info.plist */,
 				095CAF2623CB148F00503188 /* GoogleService-Info.plist */,
-				095CAF2C23CCB5EE00503188 /* PostModel.swift */,
 			);
 			path = FirestoreTest;
 			sourceTree = "<group>";
